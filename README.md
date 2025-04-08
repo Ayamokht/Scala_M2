@@ -56,7 +56,7 @@ Ce template a été utilisé pour traiter un jeu de données de crédits, afin d
 │                               └── Writer.scala
 
 > 📁 Le fichier `configuration.properties` est **intégré dans le `.jar`**, aucun fichier externe n’est requis à l’exécution.
-
+```
 ---
 
 ## ▶️ Exécution du projet
