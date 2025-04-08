@@ -3,40 +3,41 @@ package fr.mosef.scala.template.writer
 import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 import java.util.Properties
 
-class Writer(spark: SparkSession, props: Properties) {
-  def parseSaveMode(mode: String): SaveMode = mode.toLowerCase match {
+class Writer(sparkSession: SparkSession, config: Properties) {
+
+  // Convertit une chaîne en SaveMode Spark
+  def parseSaveMode(modeStr: String): SaveMode = modeStr.toLowerCase match {
     case "overwrite"     => SaveMode.Overwrite
     case "append"        => SaveMode.Append
     case "ignore"        => SaveMode.Ignore
     case "errorifexists" => SaveMode.ErrorIfExists
-    case other => throw new IllegalArgumentException(s"Mode d'écriture non supporté: $other")
+    case other           => throw new IllegalArgumentException(s"❌ Mode d'écriture non supporté: $other")
   }
 
+  // Écrit un DataFrame au format spécifié dans le chemin donné
+  def write(data: DataFrame, outputPath: String): Unit = {
+    val outputFormat  = config.getProperty("format", "csv")
+    val saveMode      = config.getProperty("mode", "overwrite")
+    val shouldMerge   = config.getProperty("coalesce", "false").toBoolean
+    val includeHeader = config.getProperty("header", "true")
+    val fieldSep      = config.getProperty("separator", ",")
 
-  def write(df: DataFrame, path: String): Unit = {
-    val format    = props.getProperty("format", "csv")
-    val mode      = props.getProperty("mode", "overwrite")
-    val coalesce  = props.getProperty("coalesce", "false").toBoolean
-    val header    = props.getProperty("header", "true")
-    val delimiter = props.getProperty("separator", ",")
+    val dfToWrite = if (shouldMerge) data.coalesce(1) else data
 
-    val finalDF = if (coalesce) df.coalesce(1) else df
+    val writer = dfToWrite.write
+      .option("header", includeHeader)
+      .option("sep", fieldSep)
+      .mode(parseSaveMode(saveMode))
 
-    val writer = finalDF.write
-      .option("header", header)
-      .option("sep", delimiter)
-      .mode(parseSaveMode(mode))
-
-
-    format match {
-      case "csv"     => writer.csv(path)
-      case "parquet" => writer.parquet(path)
-      case "json"    => writer.json(path)
-      case _         => throw new IllegalArgumentException(s"Format de sortie inconnu : $format")
+    outputFormat match {
+      case "csv"     => writer.csv(outputPath)
+      case "parquet" => writer.parquet(outputPath)
+      case "json"    => writer.json(outputPath)
+      case _         => throw new IllegalArgumentException(s"❌ Format de sortie inconnu : $outputFormat")
     }
   }
 
-  def showPreview(df: DataFrame, numRows: Int = 10): Unit = {
-    df.show(numRows, truncate = false)
+  def showDataFrame(data: DataFrame, numRows: Int = 10): Unit = {
+    data.show(numRows, truncate = false)
   }
 }

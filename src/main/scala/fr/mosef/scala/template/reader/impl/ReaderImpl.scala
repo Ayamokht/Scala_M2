@@ -25,11 +25,13 @@ class ReaderImpl(sparkSession: SparkSession) extends Reader {
       val reader = sparkSession.read.options(options)
       val withSchema = schema.map(reader.schema).getOrElse(reader)
 
-      withSchema.format("csv").load(path)
+      val df = withSchema.format("csv").load(path)
+      logInfo(s"Successfully read CSV file: $path")
+      df
     } match {
       case Success(df) => df
       case Failure(e) =>
-        logError(s"Error reading CSV file $path: ${e.getMessage}")
+        logError(s"Error reading CSV file [$path]: ${e.getMessage}")
         throw new RuntimeException(s"Failed to read CSV: ${e.getMessage}", e)
     }
   }
@@ -39,11 +41,13 @@ class ReaderImpl(sparkSession: SparkSession) extends Reader {
     validateFileExtension(path, List(".parquet", ".pqt"))
 
     Try {
-      sparkSession.read.parquet(path)
+      val df = sparkSession.read.parquet(path)
+      logInfo(s"Successfully read Parquet file: $path")
+      df
     } match {
       case Success(df) => df
       case Failure(e) =>
-        logError(s"Error reading Parquet file $path: ${e.getMessage}")
+        logError(s"Error reading Parquet file [$path]: ${e.getMessage}")
         throw new RuntimeException(s"Failed to read Parquet: ${e.getMessage}", e)
     }
   }
@@ -54,11 +58,13 @@ class ReaderImpl(sparkSession: SparkSession) extends Reader {
     }
 
     Try {
-      sparkSession.table(tableName)
+      val df = sparkSession.table(tableName)
+      logInfo(s"Successfully read Hive table: $tableName")
+      df
     } match {
       case Success(df) => df
       case Failure(e) =>
-        logError(s"Error reading Hive table $tableName: ${e.getMessage}")
+        logError(s"Error reading Hive table [$tableName]: ${e.getMessage}")
         throw new RuntimeException(s"Failed to read Hive table: ${e.getMessage}", e)
     }
   }
@@ -71,7 +77,7 @@ class ReaderImpl(sparkSession: SparkSession) extends Reader {
     if (!path.matches("^(hdfs://|s3a://|gs://|wasbs://).*")) {
       val file = new File(path)
       if (!file.exists()) {
-        throw new IllegalArgumentException(s"Path $path does not exist")
+        throw new IllegalArgumentException(s"🚫 Path does not exist: $path")
       }
     }
   }
@@ -79,15 +85,15 @@ class ReaderImpl(sparkSession: SparkSession) extends Reader {
   private def validateFileExtension(path: String, validExtensions: List[String]): Unit = {
     val isValid = validExtensions.exists(ext => path.toLowerCase.endsWith(ext))
     if (!isValid) {
-      logWarning(s"File $path does not have one of the expected extensions: ${validExtensions.mkString(", ")}")
+      logWarning(s"File [$path] does not have a valid extension. Expected: ${validExtensions.mkString(", ")}")
     }
   }
 
-  private def logError(message: String): Unit = {
-    println(s"[ERROR] $message")
+  private def log(msgType: String, emoji: String, message: String): Unit = {
+    println(s"[$msgType] $emoji $message")
   }
 
-  private def logWarning(message: String): Unit = {
-    println(s"[WARNING] $message")
-  }
+  private def logInfo(message: String): Unit = log("INFO", "ℹ️", message)
+  private def logWarning(message: String): Unit = log("WARNING", "⚠️", message)
+  private def logError(message: String): Unit = log("ERROR", "❌", message)
 }

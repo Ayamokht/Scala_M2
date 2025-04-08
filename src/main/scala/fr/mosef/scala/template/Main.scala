@@ -65,14 +65,14 @@ object Main extends App {
     else "unknown"
   }
 
-  // ✅ Chargement automatique de la config
+  // Chargement automatique de la config
   val confWriter = new Properties()
   val stream: InputStream = CONFIG_PATH match {
     case Some(path) =>
-      println(s"📄 Chargement config externe : $path")
+      println(s"Chargement de la configuration externe : $path")
       new FileInputStream(path)
     case None =>
-      println("📄 Chargement config interne : configuration.properties (dans resources)")
+      println("Chargement de la configuration interne : configuration.properties (dans resources)")
       val resourceStream = getClass.getClassLoader.getResourceAsStream("configuration.properties")
       if (resourceStream == null) {
         throw new RuntimeException("❌ Fichier de configuration interne introuvable !")
@@ -87,21 +87,35 @@ object Main extends App {
   val writer: Writer = new Writer(sparkSession, confWriter)
 
   val format = detectFormatFromPath(SRC_PATH)
-  println(s"📦 Format détecté: $format")
+  println(s"\nFormat détecté: $format")
+  println(s"Lecture des données depuis : $SRC_PATH")
 
   val inputDF: DataFrame = format match {
-    case "csv" => reader.readCSV(SRC_PATH, delimiter = ",", header = true)
+    case "csv"     => reader.readCSV(SRC_PATH, delimiter = ",", header = true)
     case "parquet" => reader.readParquet(SRC_PATH)
-    case "hive" => reader.readHiveTable(SRC_PATH.stripPrefix("hive:"))
+    case "hive"    => reader.readHiveTable(SRC_PATH.stripPrefix("hive:"))
     case _ =>
       println(s"❌ Format inconnu pour le chemin : $SRC_PATH")
       sys.exit(1)
   }
 
+  println(s"✅ Lecture terminée. Nombre de lignes : ${inputDF.count()}")
+  println(s"Aperçu des données d'entrée :")
+  inputDF.show(10, truncate = false)
+
   REPORT_TYPES.foreach { report =>
+    println(s"\nTraitement du rapport : '$report' en cours...")
     val processedDF = processor.process(inputDF, report)
+
+    println(s"✅ Rapport '$report' généré avec succès.")
+    println(s"Aperçu du rapport '$report' :")
+    writer.showDataFrame(processedDF, numRows = 10)
+
     val outputPath = s"$DST_PATH/$report"
-    println(s"📝 Écriture du rapport '$report' vers $outputPath")
+    println(s"Écriture du rapport '$report' vers : $outputPath")
     writer.write(processedDF, outputPath)
+    println(s"Rapport '$report' écrit avec succès.\n")
   }
+
+  println("🎉 Tous les rapports ont été traités et sauvegardés avec succès !")
 }
