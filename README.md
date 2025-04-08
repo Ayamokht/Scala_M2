@@ -102,7 +102,7 @@ cd %USERPROFILE%\Downloads
 ```bash
 java -jar scala-project-1.5.1-jar-with-dependencies.jar "local[*]" "credits.parquet" Outputs report1,report2,report3
 ```
-** Si vous souhaiter changer le format de sortie des rapports par exemple rajouter : **
+** Si vous souhaiter changer le format de sortie des rapports par exemple : **
 ```bash
 java -jar scala-project-1.5.1-jar-with-dependencies.jar "local[*]" "credits.parquet" Outputs report1,report2,report3 "configuration.properties"
 ```
