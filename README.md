@@ -7,7 +7,6 @@
 - 📥 Lire des fichiers `.csv`, `.parquet` ou des tables Hive
 - 🔍 Appliquer plusieurs transformations sur les données en entrée 
 - 📤 Exporter les résultats dans un dossier `Outputs`
-- Utilise un fichier de configuration `.properties` interne (par défaut) ou externe (optionnel)
 
 
 Ce template a été utilisé pour traiter un jeu de données de crédits, afin d'extraire des insights utiles comme :
