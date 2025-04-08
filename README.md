@@ -24,7 +24,7 @@ Ce template a été utilisé pour traiter un jeu de données de crédits, afin d
 
 ```bash
 .
-├── data/                         # Données source (CSV ou Parquet)
+├── data/                         # Données source
 │   ├── credits.csv
 │   └── credits.parquet
 │
