@@ -1,22 +1,19 @@
 # 📊 Scala Spark Data Pipeline – Template MoSEF
 
-Ce projet est une **template ** développée en Scala avec Apache Spark.  
-Il permet de lire des fichiers de données, d’appliquer des traitements sur les données en entrée, et d’enregistrer les résultats de façon automatisée.
-
 ---
 
 ## 🎯 Objectif:
 
 - 📥 Lire des fichiers `.csv`, `.parquet` ou des tables Hive
-- 🔍 Appliquer plusieurs transformations, 
+- 🔍 Appliquer plusieurs transformations sur les données en entrée 
 - 📤 Exporter les résultats dans un dossier `Outputs`
 - Utilise un fichier de configuration `.properties` interne (par défaut) ou externe (optionnel)
 
 
 Ce template a été utilisé pour traiter un jeu de données de crédits, afin d'extraire des insights utiles comme :
-- Le nombre de crédits par marque (`report1`)
-- La distribution des sous-catégories par type de crédit (`report2`)
-- Les crédits à risque toxique (`report3`)
+- Le montant de crédit par cloent (`report1`)
+- Date du premier crédit par client (`report2`)
+- Montant moyen de crédit par type de crédit (`report3`)
 
 ---
 
@@ -56,8 +53,23 @@ Ce template a été utilisé pour traiter un jeu de données de crédits, afin d
 │                               └── Writer.scala
 
 ```
-> 📁 Le fichier `configuration.properties` est **intégré dans le `.jar`**, aucun fichier externe n’est requis à l’exécution.
 
+### ⚙️ Configuration de l'application
+
+> 📁 Le fichier `configuration.properties` est **déjà intégré dans le `.jar`**.  
+> **Aucun fichier externe n’est requis** pour exécuter l’application. Cependant, si vous souhaitez personnaliser les paramètres (format, séparateur, header, etc.), **vous avez 2 options** :
+
+---
+
+#### 🛠️ Méthode 1 – Modifier la configuration interne (dans le `.jar`)
+
+1. Modifier le fichier : src/main/resources/configuration.properties
+2. Recompiler le projet pour générer un nouveau `.jar` :
+```bash
+mvn clean package
+```
+#### 🛠️ Méthode 2 – Télécharger le fichier de configuration `.properties`
+Accéder au dossier [resources](https://github.com/Ayamokht/Scala_M2/tree/main/src/main/resources) pour récupérer le fichier `configuration.properties`
 ---
 
 ## ▶️ Exécution du projet
@@ -65,7 +77,7 @@ Ce template a été utilisé pour traiter un jeu de données de crédits, afin d
 ### 📥 1. Télécharger le `.jar`
 
 Clique ici pour télécharger :
-👉 [`scala-project-1.4-jar-with-dependencies.jar`](https://github.com/Ayamokht/Scala_M2/packages/2465043)
+👉 [`scala-project-1.5.1-jar-with-dependencies.jar`](https://github.com/Ayamokht/Scala_M2/packages/2465043)
 
 ### 📁 2. Télécharger les données et le fichier de configuration `.properties`
 
@@ -73,10 +85,6 @@ Clique ici pour télécharger :
 Accéder au dossier [data](https://github.com/Ayamokht/Scala_M2/tree/main/data) du dépôt GitHub pour récupérer :
 - le fichier `credits.csv` **ou**
 - le fichier `credits.parquet` (pour tester avec le format Parquet)
-
-📥 **Téléchargement du fichier de configuration** :  
-Accéder au dossier [resources](https://github.com/Ayamokht/Scala_M2/tree/main/src/main/resources) pour récupérer :
-- le fichier `configuration.properties` 
 
 ### 💻 3. Ouvrir un terminal dans le dossier `Downloads`
 
@@ -86,11 +94,11 @@ cd ~/Downloads
 
 ```bash
 
-java -jar scala-project-1.4-jar-with-dependencies.jar \
+java -jar scala-project-1.5.1-jar-with-dependencies.jar \
 "local[*]" \
 "credits.parquet" \
 Outputs \
-report1,report2, report3 \
+report1,report2,report3 \
 "configuration.properties"
 
 ```
