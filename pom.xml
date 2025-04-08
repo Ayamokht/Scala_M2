@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>Ayamokht</groupId>
     <artifactId>scala-project</artifactId>
-    <version>1.4</version>
+    <version>1.5</version>
 
     <properties>
         <encoding>UTF-8</encoding>
