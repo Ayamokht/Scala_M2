@@ -87,17 +87,16 @@ Accéder au dossier [data](https://github.com/Ayamokht/Scala_M2/tree/main/data) 
 
 ### 💻 3. Ouvrir un terminal dans le dossier `Downloads`
 
+** Sur Linux/MacOS**
 ```bash
 cd ~/Downloads
 ```
-
+** Sur Windows**
 ```bash
+cd %USERPROFILE%\Downloads
+```
 
-java -jar scala-project-1.5.1-jar-with-dependencies.jar \
-"local[*]" \
-"credits.parquet" \
-Outputs \
-report1,report2,report3 \
-"configuration.properties"
-
+** Ensuite lancer cette ligne de commande **
+```bash
+java -jar scala-project-1.5.1-jar-with-dependencies.jar "local[*]" "credits.parquet" Outputs report1,report2,report3
 ```
