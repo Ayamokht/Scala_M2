@@ -68,7 +68,9 @@ Ce template a été utilisé pour traiter un jeu de données de crédits, afin d
 mvn clean package
 ```
 #### 🛠️ Méthode 2 – Télécharger le fichier de configuration `.properties`
+
 Accéder au dossier [resources](https://github.com/Ayamokht/Scala_M2/tree/main/src/main/resources) pour récupérer le fichier `configuration.properties`
+
 ---
 
 ## ▶️ Exécution du projet
@@ -99,4 +101,8 @@ cd %USERPROFILE%\Downloads
 ** Ensuite lancer cette ligne de commande **
 ```bash
 java -jar scala-project-1.5.1-jar-with-dependencies.jar "local[*]" "credits.parquet" Outputs report1,report2,report3
+```
+** Si vous souhaiter changer le format de sortie des rapports par exemple rajouter : **
+```bash
+java -jar scala-project-1.5.1-jar-with-dependencies.jar "local[*]" "credits.parquet" Outputs report1,report2,report3 "configuration.properties"
 ```
