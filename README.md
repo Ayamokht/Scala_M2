@@ -11,7 +11,7 @@
 
 
 Ce template a été utilisé pour traiter un jeu de données de crédits, afin d'extraire des insights utiles comme :
-- Le montant de crédit par cloent (`report1`)
+- Le montant de crédit par client (`report1`)
 - Date du premier crédit par client (`report2`)
 - Montant moyen de crédit par type de crédit (`report3`)
 
